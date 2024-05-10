@@ -98,9 +98,11 @@ Describe una interfaz en un lenguaje neutral, que permite la comunicación entre
 
 * Son utilizadas con frecuencia en el software de las llamadas a procedimiento remoto (RPC, Remote Procedure Call), lo que permite a los sistemas de computadoras utilizar lenguajes y sistemas operativos diferentes. IDL ofrece un puente entre dos sistemas diferentes.
 
-## Protobuffers 
+## Protobuffers
 
-El código generado por los protocol buffers proporciona métodos de utilidad para recuperar datos de archivos y flujos, extraer valores individuales de los datos, verificar si existen datos, serializar datos de nuevo a un archivo o flujo, y otras funciones útiles.
+Es como JSON, excepto que es más pequeño y rápido, y genera enlaces nativos de lenguaje. Defines cómo quieres que se estructuren tus datos una vez, luego puedes usar código fuente generado especial para escribir y leer fácilmente tus datos estructurados desde y hacia una variedad de flujos de datos y utilizando una variedad de lenguajes.
+
+Los protocol buffers son una combinación del lenguaje de definición (creado en archivos .proto), el código que el compilador de protos genera para interactuar con los datos, las bibliotecas de tiempo de ejecución específicas del lenguaje, el formato de serialización para los datos que se escriben en un archivo (o se envían a través de una conexión de red), y los datos serializados.
 
 ![alt text](https://protobuf.dev/images/protocol-buffers-concepts.png)
 
