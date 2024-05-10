@@ -15,9 +15,9 @@ type server struct {
 	pb.UnimplementedGreeterServer
 }
 
-func (s *server) SayHello(c context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+func (s *server) SayHello(c context.Context, in *pb.HelloRequest) (*pb.HelloResponse, error) {
 	log.Printf("Peticion recibida: %v", in.GetName())
-	return &pb.HelloReply{message: "Hola " + in.GetName()}, nil
+	return &pb.HelloResponse{Message: "Hola " + in.GetName()}, nil
 }
 
 func main() {

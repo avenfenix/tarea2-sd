@@ -7,6 +7,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
+
+	pb "github.com/tarea2/grpc_example"
 )
 
 func main() {
@@ -31,9 +33,9 @@ func main() {
 		name = os.Args[1]
 	}
 
-	respuesta, err := cliente.SayHello(context.Background(), &pb.HelloRequest{name: name})
+	respuesta, err := cliente.SayHello(context.Background(), &pb.HelloRequest{Name: name})
 	if err != nil {
 		log.Fatalf("No se pudo saludar: %v", err)
 	}
-	log.Printf("Saludo: %s", respuesta.message)
+	log.Printf("Saludo: %s", respuesta.Message)
 }
