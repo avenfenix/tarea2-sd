@@ -128,10 +128,11 @@ En gRPC, una aplicación cliente puede llamar directamente a un método en una a
 
 # Desarrollo
 
-Para entender como funciona gRPC usaremos solo las dos primeras maquinas virtuales. En la VM 1 tendremos al cliente y en la VM2 al servicio de proteccion. Aunque por ahora el unico servicio sera decir Hola. 
+Para entender como funciona gRPC y tambien los protobuffers usaremos solo las dos primeras maquinas virtuales. En la VM 1 tendremos al cliente y en la VM2 al servidor. Aunque por ahora el unico servicio sera decir Hola. 
 
 - examples/
   - grpc-example/
+    - .env
     - cliente/
       - cliente.go
       - go.mod
@@ -141,22 +142,37 @@ Para entender como funciona gRPC usaremos solo las dos primeras maquinas virtual
       - servidor.go
       - go.mod
 
+.env file
+
+```env
+VM2=
+GRPC_HOST=${VM2}
+GRPC_PORT=8080
+```
+
 hello.proto
 ```go
+// Protocol Buffer versión 3
 syntax = "proto3";
 
-package grpc;
+// Definición del paquete para organizar los mensajes y servicios
+package grpc_example;
 
-option go_package = "github.com/tarea2/grpc-example";
+// Opción para especificar el paquete de Go que se utilizará en el código generado
+option go_package = "github.com/tarea2/grpc_example";
 
+// Definición del servicio "Greeter"
 service Greeter {
+    // Método "SayHello" que recibe un mensaje de tipo HelloRequest y devuelve un mensaje de tipo HelloResponse
     rpc SayHello (HelloRequest) returns (HelloResponse) {}
 }
 
+// Definición del mensaje HelloRequest
 message HelloRequest {
     string name = 1;
 }
 
+// Definición del mensaje HelloResponse
 message HelloResponse {
     string message = 1;
 }
