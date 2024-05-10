@@ -18,7 +18,7 @@ Nuestra solucion debera ser capaz de:
 
 # Ejecucion
 
-## Correr cliente
+## Cliente
 
 Correr en la primera maquina virtual (VM 1)
 
@@ -26,14 +26,14 @@ Correr en la primera maquina virtual (VM 1)
 go run ./cliente <rut> <correo> <ruta>
 ```
 
-## Correr servicio proteccion
+## Servicio proteccion
 
 Correr en la segunda maquina virtual (VM 2)
 ```shell
 go run ./proteccion
 ```
 
-## Correr servicio registros
+## Servicio registros
 Correr en la tercera maquina virtual (VM 3)
 
 
@@ -41,7 +41,7 @@ Correr en la tercera maquina virtual (VM 3)
 go run ./registros
 ```
 
-## Correr servicio mensajeria
+## Servicio mensajeria
 Correr en la tercera maquina virtual (VM 3)
 
 ```shell
@@ -119,4 +119,19 @@ En gRPC, una aplicación cliente puede llamar directamente a un método en una a
 * [gRPC explicado - Youtube](https://www.youtube.com/watch?v=NHw2cjcMN9g&t=60s)
 * [Tutorial basico gRPC en Go](https://grpc.io/docs/languages/go/basics/)
 
+
+# Desarrollo
+
+Para entender como funciona gRPC usaremos solo las dos primeras maquinas virtuales. En la VM 1 tendremos al cliente y en la VM2 al servicio de proteccion. Aunque por ahora el unico servicio sera decir Hola. 
+
+- examples/
+  - sayHello/
+    - cliente/
+      - cliente.go
+      - go.mod
+    - hello/
+      - hello.proto
+    - servidor/
+      - servidor.go
+      - go.mod
 
