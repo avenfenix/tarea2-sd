@@ -93,7 +93,13 @@ protoc --version  # Ensure compiler version is 3+
 ## gRPC
 
 * [Introduction to gRPC](https://grpc.io/docs/what-is-grpc/introduction/)
+* [Tutorial basico gRPC en Go](https://grpc.io/docs/languages/go/basics/)
 
 ## Protobuffers 
 
+El código generado por los protocol buffers proporciona métodos de utilidad para recuperar datos de archivos y flujos, extraer valores individuales de los datos, verificar si existen datos, serializar datos de nuevo a un archivo o flujo, y otras funciones útiles.
+
 ![alt text](https://protobuf.dev/images/protocol-buffers-concepts.png)
+
+
+* [Lo basico de protobuffer en Go](https://protobuf.dev/getting-started/gotutorial/)
