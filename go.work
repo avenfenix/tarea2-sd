@@ -7,4 +7,5 @@ use (
 	./registros
 	./examples/grpc-example/cliente
 	./examples/grpc-example/servidor
+	./examples/grpc-example/proto	
 )
