@@ -7,6 +7,93 @@ Para comenzar a solucionar este problema dividimos nuestra aplicacion en 3 compo
 
 * Cliente (VM 1)
 * Servicio de proteccion (VM 2)
-* Servicio de registros (VM 3)
+* Servicio de registros y mensajeria (VM 3)
 
-  
+Nuestra solucion debera ser capaz de:
+ 
+* Realizar la protección de archivos PDF ya desarrollada
+* Guardar  registros  de  las  operaciones  y  sus  resultados  una  vez  hecho  el  procesamiento del archivo. 
+* Notificar al cliente para el cual el archivo está siendo protegido, a través de un mensaje por correo electrónico.
+
+
+# Ejecucion
+
+## Correr cliente
+
+Correr en la primera maquina virtual (VM 1)
+
+```shell
+go run ./cliente <rut> <correo> <ruta>
+```
+
+## Correr servicio proteccion
+
+Correr en la segunda maquina virtual (VM 2)
+```shell
+go run ./proteccion
+```
+
+## Correr servicio registros
+Correr en la tercera maquina virtual (VM 3)
+
+
+```shell
+go run ./registros
+```
+
+## Correr servicio mensajeria
+Correr en la tercera maquina virtual (VM 3)
+
+```shell
+go run ./mensajeria
+```
+
+
+# Instalacion y configuracion
+
+Todas las maquinas
+```shell
+# GOLANG
+wget https://go.dev/dl/go1.22.3.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz && echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+```
+
+Instalacion VM 2 (jammy)
+```shell
+# MongoDB
+sudo apt update
+sudo apt install gnupg wget apt-transport-https ca-certificates software-properties-common
+wget -qO- \
+  https://pgp.mongodb.com/server-7.0.asc | \
+  gpg --dearmor | \
+  sudo tee /usr/share/keyrings/mongodb-server-7.0.gpg >/dev/null
+
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] \
+  https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/7.0 multiverse" | \
+  sudo tee -a /etc/apt/sources.list.d/mongodb-org-7.0.list
+sudo apt update
+sudo apt install mongodb-org
+
+# Comandos Mongo
+sudo systemctl start mongod
+sudo systemctl daemon-reload
+sudo systemctl status mongod
+sudo systemctl stop mongod
+sudo systemctl restart mongod
+netstat -plntu
+mongosh
+
+# gRPC
+sudo apt install -y protobuf-compiler
+protoc --version  # Ensure compiler version is 3+
+```
+
+
+# Contenido
+
+## gRPC
+
+* [Introduction to gRPC](https://grpc.io/docs/what-is-grpc/introduction/)
+
+## Protobuffers 
+
+![alt text](https://protobuf.dev/images/protocol-buffers-concepts.png)
