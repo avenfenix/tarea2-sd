@@ -1,4 +1,4 @@
-package servidor
+package main
 
 import (
 	"context"
@@ -22,7 +22,7 @@ func (s *server) SayHello(c context.Context, in *pb.HelloRequest) (*pb.HelloRepl
 
 func main() {
 	// Cargar variables de entorno
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		log.Fatal("Error al leer el archivo .env")
 	}
 

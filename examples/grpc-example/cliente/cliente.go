@@ -1,4 +1,4 @@
-package cliente
+package main
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 func main() {
 
 	// Cargar variables de entorno
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		log.Fatal("Error al leer el archivo .env")
 	}
 
