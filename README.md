@@ -100,8 +100,10 @@ Describe una interfaz en un lenguaje neutral, que permite la comunicación entre
 
 ## gRPC
 
-* [gRPC explicado - Youtube](https://www.youtube.com/watch?v=NHw2cjcMN9g&t=60s)
+En gRPC, una aplicación cliente puede llamar directamente a un método en una aplicación servidor en una máquina diferente como si fuera un objeto local, lo que facilita la creación de aplicaciones y servicios distribuidos. Como en muchos sistemas de RPC, gRPC se basa en la idea de definir un servicio, especificando los métodos que pueden ser llamados de forma remota con sus parámetros y tipos de retorno. En el lado del servidor, el servidor implementa esta interfaz y ejecuta un servidor gRPC para manejar las llamadas del cliente. En el lado del cliente, el cliente tiene un stub (llamado simplemente cliente en algunos lenguajes) que proporciona los mismos métodos que el servidor.
+
 * [Introduction to gRPC](https://grpc.io/docs/what-is-grpc/introduction/)
+* [gRPC explicado - Youtube](https://www.youtube.com/watch?v=NHw2cjcMN9g&t=60s)
 * [Tutorial basico gRPC en Go](https://grpc.io/docs/languages/go/basics/)
 
 ## Protobuffers 
