@@ -85,6 +85,10 @@ mongosh
 # gRPC
 sudo apt install -y protobuf-compiler
 protoc --version  # Ensure compiler version is 3+
+
+# plugins
+go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 ```
 
 
@@ -154,4 +158,12 @@ message HelloRequest {
 message HelloResponse {
     string message = 1;
 }
+```
+
+Compiling .proto file
+
+```shell
+protoc --go_out=. --go_opt=paths=source_relative \
+--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+proto/hello.proto
 ```
