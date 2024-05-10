@@ -92,6 +92,7 @@ protoc --version  # Ensure compiler version is 3+
 
 ## gRPC
 
+* [gRPC explicado - Youtube](https://www.youtube.com/watch?v=NHw2cjcMN9g&t=60s)
 * [Introduction to gRPC](https://grpc.io/docs/what-is-grpc/introduction/)
 * [Tutorial basico gRPC en Go](https://grpc.io/docs/languages/go/basics/)
 
