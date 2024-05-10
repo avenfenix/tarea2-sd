@@ -90,6 +90,10 @@ protoc --version  # Ensure compiler version is 3+
 
 # Contenido
 
+## Interface Description Language (IDL)
+
+Describe una interfaz en un lenguaje neutral, que permite la comunicación entre componentes de software desarrollados en diferentes lenguajes de programación, como por ejemplo entre componentes escritos en C++ y otros escritas en Java.
+
 ## gRPC
 
 * [gRPC explicado - Youtube](https://www.youtube.com/watch?v=NHw2cjcMN9g&t=60s)
