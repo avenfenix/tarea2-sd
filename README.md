@@ -94,6 +94,10 @@ protoc --version  # Ensure compiler version is 3+
 
 Describe una interfaz en un lenguaje neutral, que permite la comunicación entre componentes de software desarrollados en diferentes lenguajes de programación, como por ejemplo entre componentes escritos en C++ y otros escritas en Java.
 
+### Usos
+
+* Son utilizadas con frecuencia en el software de las llamadas a procedimiento remoto (RPC, Remote Procedure Call), lo que permite a los sistemas de computadoras utilizar lenguajes y sistemas operativos diferentes. IDL ofrece un puente entre dos sistemas diferentes.
+
 ## gRPC
 
 * [gRPC explicado - Youtube](https://www.youtube.com/watch?v=NHw2cjcMN9g&t=60s)
