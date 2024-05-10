@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package hello;
+package grpc;
+
+option go_package = "github.com/tarea2/grpc-example";
 
 service Greeter {
     rpc SayHello (HelloRequest) returns (HelloResponse) {}
