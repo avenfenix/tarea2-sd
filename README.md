@@ -128,3 +128,20 @@ En gRPC, una aplicación cliente puede llamar directamente a un método en una a
 
 ### [Ejemplo de uso gRPC y protobuffers](./examples/grpc-example/README.md)
 
+## RabbitMQ
+
+### Instalando RabbitMQ
+```shell
+# sync package metadata
+sudo apt-get update
+# install dependencies manually
+sudo apt-get -y install socat logrotate init-system-helpers adduser
+
+sudo apt-get -y install rabbitmq-server
+```
+
+### Iniciando RabbitMQ
+
+```shell
+sudo systemctl start rabbitmq-server
+```

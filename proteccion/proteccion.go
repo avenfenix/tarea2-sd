@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
+	amqp "github.com/rabbitmq/amqp091-go"
 	pb "github.com/tarea2/proteccion/proto"
 	"google.golang.org/grpc"
 )
@@ -26,6 +27,12 @@ const (
 
 type server struct {
 	pb.UnimplementedProtectorServer
+	Mensajeria *RabbitMQ
+}
+
+type RabbitMQ struct {
+	Connection *amqp.Connection
+	Channel    *amqp.Channel
 }
 
 type ILovePdf struct {
@@ -212,6 +219,23 @@ func (op *Operations) download(outputFilename string, inputPath string) string {
 	return outputPath
 }
 
+func (s *server) publishMessage(queueName string, message string) error {
+	err := s.Mensajeria.Channel.Publish(
+		"",        // exchange
+		queueName, // routing key
+		false,     // mandatory
+		false,     // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("failed to publish message: %v", err)
+	}
+	return nil
+}
+
 func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.RespuestaProteger, error) {
 	log.Printf("Peticion recibida con correo: %v", in.GetCorreo())
 
@@ -220,7 +244,7 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 	archivo := in.GetFile()
 
 	// Guardar el archivo en el servidor
-	nombreArchivo := "archivo_protegido.pdf" // Nombre del archivo en el servidor
+	nombreArchivo := "archivo.pdf" // Nombre del archivo en el servidor
 	path := "./files/" + nombreArchivo
 
 	// Crear el archivo en el servidor
@@ -249,7 +273,36 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 		return &pb.RespuestaProteger{Message: "Error al proteger el archivo"}, nil
 	}
 
+	// Envía un mensaje a RabbitMQ
+	err = s.publishMessage("operations", "Se ha completado una operación relevante en la VM 2")
+	if err != nil {
+		log.Printf("Failed to publish message: %v", err)
+	}
+
 	return &pb.RespuestaProteger{Message: "Solicitud de proteccion recibida y sera enviada a: " + in.GetCorreo()}, nil
+}
+
+func NewRabbitMQ() (*RabbitMQ, error) {
+	conn, err := amqp.Dial("amqp://guest:guest@" + os.Getenv("RABBITMQ_HOST") + ":" + os.Getenv("RABBITMQ_PORT"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to RabbitMQ: %v", err)
+	}
+
+	ch, err := conn.Channel()
+	if err != nil {
+		conn.Close()
+		return nil, fmt.Errorf("failed to open a channel: %v", err)
+	}
+
+	return &RabbitMQ{
+		Connection: conn,
+		Channel:    ch,
+	}, nil
+}
+
+func (rmq *RabbitMQ) Close() {
+	rmq.Channel.Close()
+	rmq.Connection.Close()
 }
 
 func main() {
@@ -258,13 +311,21 @@ func main() {
 		log.Fatal("Error al leer el archivo .env")
 	}
 
+	// Inicializar RabbitMQ
+	rmq, err := NewRabbitMQ()
+	if err != nil {
+		log.Fatalf("Error connecting to RabbitMQ: %v", err)
+	}
+	defer rmq.Close()
+
+	// Crear el servidor gRPC
 	listener, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
 	if err != nil {
 		log.Fatalf("Error al escuchar: %v", err)
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterProtectorServer(s, &server{})
+	pb.RegisterProtectorServer(s, &server{Mensajeria: rmq})
 
 	if err := s.Serve(listener); err != nil {
 		log.Fatalf("Error al servir: %v", err)
