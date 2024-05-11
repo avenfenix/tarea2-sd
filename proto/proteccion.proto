@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/tarea2/proteccion/proto";
+
+service Protector{
+    rpc Proteger (SolicitudProteger) returns (RespuestaProteger);
+}
+
+message SolicitudProteger{
+    string rut = 1;
+    string correo = 2;
+    bytes file = 3;
+}
+
+message RespuestaProteger{
+    string message = 1;
+}

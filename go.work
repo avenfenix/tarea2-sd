@@ -5,7 +5,8 @@ use (
 	./mensajeria
 	./proteccion
 	./registros
+	./proto
 	./examples/grpc-example/cliente
 	./examples/grpc-example/servidor
-	./examples/grpc-example/proto	
+	./examples/grpc-example/proto
 )
