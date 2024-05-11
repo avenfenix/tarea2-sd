@@ -4,14 +4,14 @@ package grpc_example;
 
 option go_package = "github.com/tarea2/grpc_example";
 
-service Greeter {
-    rpc SayHello (HelloRequest) returns (HelloResponse) {}
+service Saludador {
+    rpc DecirHola (SolicitudHola) returns (RespuestaHola) {}
 }
 
-message HelloRequest {
+message SolicitudHola {
     string name = 1;
 }
 
-message HelloResponse {
+message RespuestaHola {
     string message = 1;
 }

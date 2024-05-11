@@ -12,12 +12,12 @@ import (
 )
 
 type server struct {
-	pb.UnimplementedGreeterServer
+	pb.UnimplementedSaludadorServer
 }
 
-func (s *server) SayHello(c context.Context, in *pb.HelloRequest) (*pb.HelloResponse, error) {
+func (s *server) DecirHola(c context.Context, in *pb.SolicitudHola) (*pb.RespuestaHola, error) {
 	log.Printf("Peticion recibida: %v", in.GetName())
-	return &pb.HelloResponse{Message: "Hola " + in.GetName()}, nil
+	return &pb.RespuestaHola{Message: "Hola " + in.GetName()}, nil
 }
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
+	pb.RegisterSaludadorServer(s, &server{})
 
 	if err := s.Serve(listener); err != nil {
 		log.Fatalf("Error al servir: %v", err)

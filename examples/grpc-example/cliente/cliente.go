@@ -25,7 +25,7 @@ func main() {
 
 	defer connection.Close()
 
-	cliente := pb.NewGreeterClient(connection)
+	cliente := pb.NewSaludadorClient(connection)
 
 	name := "Mundo"
 
@@ -33,7 +33,7 @@ func main() {
 		name = os.Args[1]
 	}
 
-	respuesta, err := cliente.SayHello(context.Background(), &pb.HelloRequest{Name: name})
+	respuesta, err := cliente.DecirHola(context.Background(), &pb.SolicitudHola{Name: name})
 	if err != nil {
 		log.Fatalf("No se pudo saludar: %v", err)
 	}
