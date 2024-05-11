@@ -20,7 +20,7 @@ func main() {
 		log.Fatal("Error al leer el archivo .env")
 	}
 	// Conexion
-	conn, err := amqp.Dial("amqp://guest:guest@" + os.Getenv("RABBITMQ_HOST") + ":" + os.Getenv("RABBITMQ_PORT"))
+	conn, err := amqp.Dial("amqp://localhost:" + os.Getenv("RABBITMQ_PORT"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 

@@ -283,7 +283,7 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 }
 
 func NewRabbitMQ() (*RabbitMQ, error) {
-	conn, err := amqp.Dial("amqp://guest:guest@" + os.Getenv("RABBITMQ_HOST") + ":" + os.Getenv("RABBITMQ_PORT"))
+	conn, err := amqp.Dial("amqp://admin:1234@" + os.Getenv("RABBITMQ_HOST") + ":" + os.Getenv("RABBITMQ_PORT"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to RabbitMQ: %v", err)
 	}
