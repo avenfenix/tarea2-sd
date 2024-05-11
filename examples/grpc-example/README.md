@@ -61,6 +61,70 @@ import (
 )
 ```
 
+### Codigo servidor
+
+```go
+type server struct {
+	pb.UnimplementedSaludadorServer
+}
+
+func (s *server) DecirHola(c context.Context, in *pb.SolicitudHola) (*pb.RespuestaHola, error) {
+	log.Printf("Peticion recibida: %v", in.GetName())
+	return &pb.RespuestaHola{Message: "Hola " + in.GetName()}, nil
+}
+
+func main() {
+	// Cargar variables de entorno
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error al leer el archivo .env")
+	}
+
+	listener, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
+	if err != nil {
+		log.Fatalf("Error al escuchar: %v", err)
+	}
+
+	s := grpc.NewServer()
+	pb.RegisterSaludadorServer(s, &server{})
+
+	if err := s.Serve(listener); err != nil {
+		log.Fatalf("Error al servir: %v", err)
+	}
+}
+```
+
+### Codigo cliente
+
+```go
+func main() {
+
+	// Cargar variables de entorno
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error al leer el archivo .env")
+	}
+
+	connection, err := grpc.Dial(os.Getenv("GRPC_HOST")+":"+os.Getenv("GRPC_PORT"), grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("No se pudo conectar: %v", err)
+	}
+
+	defer connection.Close()
+
+	cliente := pb.NewSaludadorClient(connection)
+
+	name := "Mundo"
+
+	if len(os.Args) > 1 {
+		name = os.Args[1]
+	}
+
+	respuesta, err := cliente.DecirHola(context.Background(), &pb.SolicitudHola{Name: name})
+	if err != nil {
+		log.Fatalf("No se pudo saludar: %v", err)
+	}
+	log.Printf("Saludo: %s", respuesta.Message)
+}
+```
 ### Corriendo ejemplo
 
 ```shell
