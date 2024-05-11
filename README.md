@@ -51,10 +51,10 @@ go run ./mensajeria
 
 # Instalacion y configuracion
 
-Todas las maquinas
+
+Instalar y configurar todo en la maquina virtual `n`
 ```shell
-# GOLANG
-wget https://go.dev/dl/go1.22.3.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz && echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+./scripts/setup_vm<n>.sh
 ```
 
 Instalacion VM 2 (jammy)
@@ -127,21 +127,3 @@ En gRPC, una aplicación cliente puede llamar directamente a un método en una a
 
 
 ### [Ejemplo de uso gRPC y protobuffers](./examples/grpc-example/README.md)
-
-## RabbitMQ
-
-### Instalando RabbitMQ
-```shell
-# sync package metadata
-sudo apt-get update
-# install dependencies manually
-sudo apt-get -y install socat logrotate init-system-helpers adduser
-
-sudo apt-get -y install rabbitmq-server
-```
-
-### Iniciando RabbitMQ
-
-```shell
-sudo systemctl start rabbitmq-server
-```
