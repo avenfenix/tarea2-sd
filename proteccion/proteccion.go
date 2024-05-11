@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net"
@@ -220,23 +219,22 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 
 	archivo := in.GetFile()
 
-	// Guardar el archivo temporalmente en el servidor
-	archivoTemp, err := ioutil.TempFile("", "archivo_")
+	// Guardar el archivo en el servidor
+	nombreArchivo := "archivo_protegido.pdf" // Nombre del archivo en el servidor
+	path := filepath.Join("./files", nombreArchivo)
+
+	// Crear el archivo en el servidor
+	archivoServidor, err := os.Create(path)
 	if err != nil {
-		return nil, fmt.Errorf("error al crear archivo temporal: %v", err)
+		return nil, fmt.Errorf("error al crear archivo en el servidor: %v", err)
 	}
-	defer archivoTemp.Close()
+	defer archivoServidor.Close()
 
-	// Escribir el contenido del archivo en el archivo temporal
-	_, err = archivoTemp.Write(archivo)
+	// Escribir el contenido del archivo en el archivo en el servidor
+	_, err = archivoServidor.Write(archivo)
 	if err != nil {
-		return nil, fmt.Errorf("error al escribir en archivo temporal: %v", err)
+		return nil, fmt.Errorf("error al escribir en archivo en el servidor: %v", err)
 	}
-
-	// Obtener la ruta del archivo temporal
-	path := archivoTemp.Name()
-
-	// CHATGPT aqui guarda el archivo
 
 	password := in.GetRut()
 
