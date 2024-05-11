@@ -221,7 +221,7 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 
 	// Guardar el archivo en el servidor
 	nombreArchivo := "archivo_protegido.pdf" // Nombre del archivo en el servidor
-	path := filepath.Join("./files", nombreArchivo)
+	path := "./files" + nombreArchivo
 
 	// Crear el archivo en el servidor
 	archivoServidor, err := os.Create(path)
