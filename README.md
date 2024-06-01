@@ -58,10 +58,9 @@ chmod +x ./scripts/setup_vm<n>.sh
 ./scripts/setup_vm<n>.sh
 ```
 
-Instalacion VM 2 (jammy)
+Si queremos realizar compilaciones de nuestros archivos .proto debemos instalar lo siguiente:
 ```shell
 
-# gRPC
 sudo apt install -y protobuf-compiler
 protoc --version  # Ensure compiler version is 3+
 
@@ -106,3 +105,14 @@ En gRPC, una aplicación cliente puede llamar directamente a un método en una a
 
 
 ### [Ejemplo de uso gRPC y protobuffers](./examples/grpc-example/README.md)
+
+## RabbitMQ
+
+RabbitMQ es un intermediario de mensajes: acepta y reenvía mensajes. Puedes pensar en ello como una oficina postal: cuando depositas el correo que deseas enviar en un buzón, puedes estar seguro de que el cartero eventualmente entregará el correo a tu destinatario. En esta analogía, RabbitMQ es un buzón, una oficina postal y un cartero.
+
+La diferencia principal entre RabbitMQ y la oficina postal es que no trabaja con papel, en lugar de eso acepta, almacena y reenvía bloques binarios de datos, es decir, mensajes.
+
+
+### misc
+
+- [Messaging Patterns](https://www.enterpriseintegrationpatterns.com/patterns/messaging/RequestReply.html)

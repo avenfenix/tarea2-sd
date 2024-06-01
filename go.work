@@ -9,4 +9,6 @@ use (
 	./examples/grpc-example/cliente
 	./examples/grpc-example/servidor
 	./examples/grpc-example/proto
+	./examples/hello-rabbitmq/consumidor
+	./examples/hello-rabbitmq/productor
 )
