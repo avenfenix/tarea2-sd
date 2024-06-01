@@ -52,10 +52,22 @@ go run ./mensajeria
 # Instalacion y configuracion
 
 
-Instalar y configurar todo en la maquina virtual `n`
+## Instalar mongodb
 ```shell
-chmod +x ./scripts/setup_vm<n>.sh
-./scripts/setup_vm<n>.sh
+chmod +x ./scripts/install_mongo.sh
+./scripts/install_mongo.sh
+```
+
+## Instalar go
+```shell
+chmod +x ./scripts/install_go.sh
+./scripts/install_go.sh
+```
+
+## Instalar rabbitmq-server
+```shell
+chmod +x ./scripts/install_rabbitmq.sh
+./scripts/install_rabbitmq.sh
 ```
 
 Si queremos realizar compilaciones de nuestros archivos .proto debemos instalar lo siguiente:
