@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"net/smtp"
 
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -14,7 +15,45 @@ func failOnError(err error, msg string) {
 	}
 }
 
+func sendMail(to, subject, body string) error {
+	// Correo Gmail desde el cual se mandan los correos
+    from := "" 
+	// Clave para el correo, se debe generar una appPassword
+    password := "" 
+
+    // Se Configura el servidor SMTP
+    smtpHost := "smtp.gmail.com"
+    smtpPort := "587"
+
+    // Configurar la autenticación
+    auth := smtp.PlainAuth("", from, password, smtpHost)
+
+    // Componer el mensaje
+    msg := []byte("To: " + to + "\r\n" +
+        "Subject: " + subject + "\r\n" +
+        "\r\n" +
+        body + "\r\n")
+
+    // Enviar el correo
+    err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, msg)
+    if err != nil {
+        return err
+    }
+
+    log.Println("Correo enviado correctamente")
+    return nil
+}
+
 func main() {
+	// TODO: Automatizar la obtención del correo
+	to := ""
+    subject := "Prueba de envío de correo en Go"
+    body := "Este es un correo de prueba enviado desde un programa en Go."
+
+    err := sendMail(to, subject, body)
+    if err != nil {
+        log.Fatalf("Error al enviar el correo: %s", err)
+    }
 	// Cargar variables de entorno
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error al leer el archivo .env")
