@@ -267,7 +267,7 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 	op.startTask("protect")
 	op.addFile(path)
 	op.execute(password)
-	fileName := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)) + "_protegido.pdf"
+	fileName := strings.TrimSuffix(nombreArchivo, filepath.Ext(nombreArchivo)) + "_protegido.pdf"
 	targetPath := op.download(fileName, path)
 	if targetPath == "" {
 		return &pb.RespuestaProteger{Message: "Error al proteger el archivo"}, nil
