@@ -240,9 +240,13 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 	log.Printf("Peticion recibida con correo: %v", in.GetCorreo())
 
 	// Guardar archivo enviado por el cliente en carpeta ./files
-
 	archivo := in.GetFile()
 
+	// Crear la carpeta ./files/ si no existe
+	err := os.MkdirAll("./files", os.ModePerm)
+	if err != nil {
+		return nil, fmt.Errorf("error al crear la carpeta ./files: %v", err)
+	}
 	// Guardar el archivo en el servidor
 	nombreArchivo := "archivo.pdf" // Nombre del archivo en el servidor
 	path := "./files/" + nombreArchivo
@@ -265,11 +269,25 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 	publicKey := os.Getenv("PUBLIC_KEY")
 	op := NewOperations(publicKey)
 	op.startTask("protect")
-	op.addFile(path)
+	err = op.addFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("error al agregar el archivo a la tarea de protección: %v", err)
+	}
 	op.execute(password)
+
+	// Crear la carpeta ./files_proc/ si no existe
+	err = os.MkdirAll("./files_proc", os.ModePerm)
+	if err != nil {
+		return nil, fmt.Errorf("error al crear la carpeta ./files_proc: %v", err)
+	}
+
+	// Definir el nombre del archivo protegido y su ruta de destino
 	fileName := strings.TrimSuffix(nombreArchivo, filepath.Ext(nombreArchivo)) + "_protegido.pdf"
-	targetPath := op.download(fileName, path)
-	if targetPath == "" {
+	targetPath := "./files_proc/" + fileName
+
+	// Descargar el archivo protegido
+	downloadedPath := op.download(fileName, targetPath)
+	if downloadedPath == "" {
 		return &pb.RespuestaProteger{Message: "Error al proteger el archivo"}, nil
 	}
 
@@ -279,7 +297,7 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 		log.Printf("Failed to publish message: %v", err)
 	}
 
-	return &pb.RespuestaProteger{Message: "Solicitud de proteccion recibida y sera enviada a: " + in.GetCorreo()}, nil
+	return &pb.RespuestaProteger{Message: "Archivo protegido guardado en: " + targetPath}, nil
 }
 
 func NewRabbitMQ() (*RabbitMQ, error) {
