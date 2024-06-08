@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func failOnError(err error, msg string) {
@@ -53,7 +58,18 @@ func main() {
 		nil,    // args
 	)
 	failOnError(err, "Failed to register a consumer")
+	// Conectar a la base de datos de la maquina virtual 2
+	mongoURI := "mongodb://" + os.Getenv("MONGODB_HOST") + ":" + os.Getenv("MONGODB_PORT")
+	clientOptions := options.Client().ApplyURI(mongoURI)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	failOnError(err, "Failed to connect to MongoDB")
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
+	collection := client.Database("tarea2").Collection("registros")
 	// Loop
 
 	var forever chan struct{}
@@ -61,6 +77,17 @@ func main() {
 	go func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
+			// Insertar el mensaje en MongoDB
+			doc := bson.D{
+				{Key: "message", Value: string(d.Body)},
+				{Key: "receivedAt", Value: time.Now()},
+			}
+			_, err := collection.InsertOne(context.TODO(), doc)
+			if err != nil {
+				log.Printf("Failed to insert document: %s", err)
+			} else {
+				log.Printf("Inserted a document: %s", d.Body)
+			}
 		}
 	}()
 	log.Printf(" Servicio de registros.")
