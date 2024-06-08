@@ -13,6 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type Message struct {
+	Content    string    `json:"content"`
+	ReceivedAt time.Time `json:"receivedAt"`
+}
+
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Panicf("%s: %s", msg, err)
@@ -77,6 +82,10 @@ func main() {
 	go func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
+			// Inicializar el mensaje
+			var msg Message
+			msg.Content = string(d.Body)
+			msg.ReceivedAt = time.Now()
 			// Insertar el mensaje en MongoDB
 			doc := bson.D{
 				{Key: "message", Value: string(d.Body)},
