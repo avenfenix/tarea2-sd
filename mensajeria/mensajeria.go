@@ -1,13 +1,23 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/smtp"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type Message struct {
+	Content    string    `json:"content"`
+	ReceivedAt time.Time `json:"receivedAt"`
+}
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -47,7 +57,7 @@ func main() {
 	}
 	password := os.Getenv("SENDER_PASSWORD")
 	from := os.Getenv("SENDER_EMAIL")
-	// TODO: Automatizar la obtención del correo
+
 	subject := "DiSis proteccion"
 	body := "Su archivo ya se encuentra protegido y disponible en la vm2."
 
@@ -73,6 +83,19 @@ func main() {
 	)
 	failOnError(err, "Failed to declare a queue")
 
+	// Conexión a MongoDB
+	mongoURI := "mongodb://" + os.Getenv("MONGODB_HOST") + ":" + os.Getenv("MONGODB_PORT")
+	clientOptions := options.Client().ApplyURI(mongoURI)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	failOnError(err, "Failed to connect to MongoDB")
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	collection := client.Database("testdb").Collection("testcollection")
+
 	// Podemos leer los mensajes desde el canal
 
 	msgs, err := ch.Consume(
@@ -93,7 +116,26 @@ func main() {
 	go func() {
 		for d := range msgs {
 			to := string(d.Body)
-			sendMail(to, subject, password, from, body)
+			errM := sendMail(to, subject, password, from, body)
+
+			var msg Message
+			msg.Content = "Se ha enviado el correo"
+			msg.ReceivedAt = time.Now()
+			// Insertar el mensaje en MongoDB
+
+			if errM != nil {
+				msg.Content = "Error al enviar el correo"
+			}
+			doc := bson.D{
+				{Key: "message", Value: msg.Content},
+				{Key: "receivedAt", Value: time.Now()},
+			}
+			_, err := collection.InsertOne(context.TODO(), doc)
+			if err != nil {
+				log.Printf("Failed to insert document: %s", err)
+			} else {
+				log.Printf("Inserted a document: %s", d.Body)
+			}
 		}
 	}()
 	log.Printf(" Servicio de mensajeria.")
