@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"os"
 	"net/smtp"
+	"os"
 
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -15,49 +15,42 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func sendMail(to, subject, body string) error {
-	// Correo Gmail desde el cual se mandan los correos
-    from := "" 
-	// Clave para el correo, se debe generar una appPassword
-    password := "" 
+func sendMail(to, subject, password, from, body string) error {
 
-    // Se Configura el servidor SMTP
-    smtpHost := "smtp.gmail.com"
-    smtpPort := "587"
+	// Se Configura el servidor SMTP
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
 
-    // Configurar la autenticación
-    auth := smtp.PlainAuth("", from, password, smtpHost)
+	// Configurar la autenticación
+	auth := smtp.PlainAuth("", from, password, smtpHost)
 
-    // Componer el mensaje
-    msg := []byte("To: " + to + "\r\n" +
-        "Subject: " + subject + "\r\n" +
-        "\r\n" +
-        body + "\r\n")
+	// Componer el mensaje
+	msg := []byte("To: " + to + "\r\n" +
+		"Subject: " + subject + "\r\n" +
+		"\r\n" +
+		body + "\r\n")
 
-    // Enviar el correo
-    err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, msg)
-    if err != nil {
-        return err
-    }
+	// Enviar el correo
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, msg)
+	if err != nil {
+		return err
+	}
 
-    log.Println("Correo enviado correctamente")
-    return nil
+	log.Println("Correo enviado correctamente")
+	return nil
 }
 
 func main() {
-	// TODO: Automatizar la obtención del correo
-	to := ""
-    subject := "Prueba de envío de correo en Go"
-    body := "Este es un correo de prueba enviado desde un programa en Go."
-
-    err := sendMail(to, subject, body)
-    if err != nil {
-        log.Fatalf("Error al enviar el correo: %s", err)
-    }
 	// Cargar variables de entorno
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error al leer el archivo .env")
 	}
+	password := os.Getenv("SENDER_PASSWORD")
+	from := os.Getenv("SENDER_EMAIL")
+	// TODO: Automatizar la obtención del correo
+	subject := "DiSis proteccion"
+	body := "Su archivo ya se encuentra protegido y disponible en la vm2."
+
 	// Conexion
 	conn, err := amqp.Dial("amqp://localhost:" + os.Getenv("RABBITMQ_PORT"))
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -71,12 +64,12 @@ func main() {
 	// Declarar cola
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		"mensajes", // name
+		false,      // durable
+		false,      // delete when unused
+		false,      // exclusive
+		false,      // no-wait
+		nil,        // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
@@ -99,7 +92,8 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			to := string(d.Body)
+			sendMail(to, subject, password, from, body)
 		}
 	}()
 	log.Printf(" Servicio de mensajeria.")

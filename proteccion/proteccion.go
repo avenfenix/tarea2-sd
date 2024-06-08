@@ -94,6 +94,7 @@ func (op *Operations) startTask(tool string) {
 	json.NewDecoder(resp.Body).Decode(&result)
 	resp.Body.Close()
 	op.TaskID, op.Server = result["task"].(string), result["server"].(string)
+
 }
 
 func (op *Operations) addFile(filename string) error {
@@ -267,8 +268,20 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 	password := in.GetRut()
 
 	publicKey := os.Getenv("PUBLIC_KEY")
+	err = s.publishMessage("operations", "Se ha iniciado un servidor de IlovePDF")
+	if err != nil {
+		log.Printf("Failed to publish message: %v", err)
+	}
 	op := NewOperations(publicKey)
+	err = s.publishMessage("operations", "Se ha Descargado subido el archvio al servidor de IlovePDF")
+	if err != nil {
+		log.Printf("Failed to publish message: %v", err)
+	}
 	op.startTask("protect")
+	err = s.publishMessage("operations", "Se ha protegido el archivo correctamente")
+	if err != nil {
+		log.Printf("Failed to publish message: %v", err)
+	}
 	err = op.addFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("error al agregar el archivo a la tarea de protección: %v", err)
@@ -292,11 +305,15 @@ func (s *server) Proteger(c context.Context, in *pb.SolicitudProteger) (*pb.Resp
 	}
 
 	// Envía un mensaje a RabbitMQ
-	err = s.publishMessage("operations", "Se ha completado una operación relevante en la VM 2")
+	err = s.publishMessage("operations", "Se ha Descargado el archivo protegido")
 	if err != nil {
 		log.Printf("Failed to publish message: %v", err)
 	}
 
+	err = s.publishMessage("mensajes", in.GetCorreo())
+	if err != nil {
+		log.Printf("Failed to publish message: %v", err)
+	}
 	return &pb.RespuestaProteger{Message: "Archivo protegido guardado en: " + targetPath}, nil
 }
 
